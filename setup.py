@@ -11,16 +11,18 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="autodistill-base-model",
+    name="autodistill-codet",
     version=version,
-    author="",
-    author_email="",
-    description="Model for use with Autodistill",
+    author="Roboflow",
+    author_email="support@roboflow.com",
+    description="CoDet model for use with Autodistill",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://github.com/autodistill/autodistill-codet",
     install_requires=[
-        # list your requires
+        "supervision",
+        "torch",
+        "torchvision"
     ],
     packages=find_packages(exclude=("tests",)),
     extras_require={
