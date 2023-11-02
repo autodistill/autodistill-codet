@@ -33,7 +33,7 @@ When you first run the model, it will download CoDet and its dependencies, as we
 
 When the `predict()` function runs, the output will also be verbose. You can ignore the output printed to the console that appears when you call `predict()`.
 
-You can only predict classes in the LVIS dataset. You can see a list of these classes in the `lvis_classes.txt` file in the [autodistill-codet GitHub repository](https://github.com/autodistill/autodistill-codet).
+You can only predict classes in the LVIS vocabulary. You can see a list of supported classes in the `class_names.json` file in the [autodistill-codet GitHub repository](https://github.com/autodistill/autodistill-codet).
 
 Use the code snippet below to get started:
 
@@ -57,12 +57,15 @@ base_model = CoDet(
 )
 
 # run inference on an image and display the results
-predictions = base_model.predict("./context_images/1.jpeg")
+# class_names is a list of all classes supported by the model
+# class_names can be used to turn the class_id values from the model into human-readable class names
+predictions, class_names = base_model.predict("./context_images/1.jpeg")
 image = cv2.imread("./context_images/1.jpeg")
 
 plot(
   image=image,
-  detections=predictions
+  detections=predictions,
+  classes=class_names
 )
 
 # run inference on a folder of images and save the results
@@ -72,7 +75,7 @@ base_model.label("./context_images", extension=".jpeg")
 
 ## License
 
-This project is licensed under an Apache 2.0 license, except where files explicitly note a license.
+This project is licensed under an [Apache 2.0 license](LICENSE), except where files explicitly note a license.
 
 ## 🏆 Contributing
 
