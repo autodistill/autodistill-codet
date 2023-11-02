@@ -6,7 +6,6 @@ import torch
 
 import supervision as sv
 from autodistill.detection import CaptionOntology, DetectionBaseModel
-from .predictor import VisualizationDemo
 
 HOME = os.path.expanduser("~")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -18,7 +17,7 @@ def check_dependencies():
     
     os.chdir(autodistill_dir)
     
-    # Check if Detic is installed
+    # Check if CoDet is installed
     codet_path = os.path.join(autodistill_dir, "CoDet")
 
     if not os.path.isdir(codet_path):
@@ -36,30 +35,20 @@ def check_dependencies():
         
         models_dir = os.path.join(codet_path, "checkpoints")
         os.makedirs(models_dir, exist_ok=True)
-        # https://github.com/CVMI-Lab/CoDet/blob/main/configs/CoDet_OVLVIS_SwinB_4x_ft4x.yaml
 
         model_config_path = os.path.join(codet_path, "configs/CoDet_OVLVIS_SwinB_4x_ft4x.yaml")
         subprocess.run(["wget", "-O", model_config_path, "https://raw.githubusercontent.com/CVMI-Lab/CoDet/main/configs/CoDet_OVLVIS_SwinB_4x_ft4x.yaml"])
 
         model_weights_path = os.path.join(models_dir, "CoDet_OVLVIS_R5021k_4x_ft4x.pth")
-        subprocess.run(["wget", "-O", model_weights_path, "https://doc-04-84-docs.googleusercontent.com/docs/securesc/9p5sospc1t58dc80kjk0m67ae8mqfmul/9gsnqb5a2ll7tukmch6h12c135k9vk27/1698875025000/07118889864120988423/03796184128890941253/1-chsmrh5fahOOSa4G2o5Mi6W2mGuMtG-?e=download&ax=AI0foUrKxjaTjBnAfniAli2Bh0S_2EGVJCIN6Kn0Wmrv1DDZ6ZPvoyzCby9rNytltWUzvXHVsH8oNCOwa0CgrfV-IQchAsGLOORoVyZC3BjEkWzUoGX5Tb205lTaEhJWHI0aq_rCpBryCMu1RUnKF-FhU6Yvv07QYvI0voCfZDrETLwwDOy3wQQzyZPMwPsCgsjxPqSE6-erbA3rXcRW9MhCImcLJ3URzJ8taiKHXnYPaxzRsPn5R8CJed3r6-Mh73gLUj542AlAlcDYmriqo5RG8GnxsVrUfoQQfA2kqZzJxajAnZG8EGhNgNDqrzm72V816PS-Ne2TMYwQnS0iu8xucq3eEz_eqmFSFo7l5WteK6SYYVd7uS2d1Z5uM31s0c9Z7czEnsxSP5pXi5XDCwCHtciru5KXZydjOXyaCYUM5mriaq1LxQXJCOn5v6SRCghz_E4K4iBjhBLEi7DtmsD9t2YOpI1fEquFYnBR3wwdFxJcP-ok-jdb9Ooh7K8s7ZmvFtO4snkBrKI2FZRi9z2THX-h-u1idHv3bri6ALxrjEtB0AuYy7qlEfjOvE83C_1EpYZ8z9yso8SVC8Aej0BlqbNVX7j-VK-Zkzu1z_lWDwN6hA2ngTy_G-kVc7BVZ8HcM3t1jQpPqBohx05obJX2vVwiFnXHoeTR8_tMzzQw3qM8VUgxifqQU6dnlfoq8R-oEeZMUL1U2bFFgk3Cll7v1Towewh2PV2RonCDeTcNrPGRKiyGFmJlFV5Zvb33-ADUJozaKbuS04bx69vXQgQeMJM7Lz195lr3yxWY4Hz1zKmr-tYWivWXpzTYqIHa9MZw9kFWrvZh9h9RfFdW9UjGGIA9eqyYVNFndrIv3ooBDzS9iy6No4k-r2akybrlcTg2Rw&uuid=21678dfe-9d64-46ff-b2d0-3de940ccb328&authuser=0"])
+        subprocess.run(["wget", "-O", model_weights_path, "https://media.roboflow.com/CoDet_OVLVIS_SwinB_4x_ft4x.pth"])
 
-        # mkdor atasets/coco/
         os.makedirs("datasets/coco", exist_ok=True)
-        # datasets/coco/annotations/
         os.makedirs("datasets/coco/annotations", exist_ok=True)
-        # run python tools/get_coco_zeroshot_oriorder.py --data_path datasets/coco/zero-shot/instances_train2017_seen_2.json
-        # in correct path
-        # print dir
-        
-        subprocess.run(["python3", "tools/get_coco_zeroshot_oriorder.py", "--data_path", "datasets/coco/zero-shot/instances_train2017_seen_2.json"])
-        #python tools/get_coco_zeroshot_oriorder.py --data_path datasets/coco/zero-shot/instances_val2017_all_2.json
-        subprocess.run(["python3", "tools/get_coco_zeroshot_oriorder.py", "--data_path", "datasets/coco/zero-shot/instances_val2017_all_2.json"])
+        os.makedirs("datasets/lvis", exist_ok=True)
 
-        # python tools/remove_lvis_rare.py --ann datasets/lvis/lvis_v1_train.json
-        subprocess.run([ "python3", "tools/remove_lvis_rare.py", "--ann", "datasets/lvis/lvis_v1_train.json"])
+        subprocess.run(["wget", "-O", "datasets/lvis/lvis_v1_train_norare_cat_info.json", "https://media.roboflow.com/lvis_v1_train_norare_cat_info.json"])
 
-# check_dependencies()
+check_dependencies()
 
 import logging
 import os
@@ -89,6 +78,8 @@ sys.path.insert(0, deformation_path)
 from codet.config import add_codet_config
 
 logger = logging.getLogger("detectron2")
+
+from autodistill_codet.predictor import VisualizationDemo
 
 def setup(args):
     """
