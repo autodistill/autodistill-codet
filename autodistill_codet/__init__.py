@@ -1,3 +1,3 @@
 from autodistill_codet.codet_model import CoDet
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
