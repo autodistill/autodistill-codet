@@ -59,13 +59,14 @@ base_model = CoDet(
 # run inference on an image and display the results
 # class_names is a list of all classes supported by the model
 # class_names can be used to turn the class_id values from the model into human-readable class names
-predictions, class_names = base_model.predict("./context_images/1.jpeg")
+# class names is defined in self.class_names
+predictions = base_model.predict("./context_images/1.jpeg")
 image = cv2.imread("./context_images/1.jpeg")
 
 plot(
   image=image,
   detections=predictions,
-  classes=class_names
+  classes=base_model.class_names
 )
 
 # run inference on a folder of images and save the results
