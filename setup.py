@@ -25,7 +25,7 @@ setuptools.setup(
         "autodistill",
         "lvis",
         "wandb",
-        "Pillow==10.0.1",
+        "Pillow==10.2.0",
         "numpy"
     ],
     packages=find_packages(exclude=("tests",)),
